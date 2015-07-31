@@ -103,7 +103,6 @@ if __name__ == "__main__":
                         help="remove existing build folder before building")
     args = parser.parse_args()
 
-    print(args.clean)
     if args.clean:
         clean_build_path()
 
