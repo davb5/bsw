@@ -38,7 +38,7 @@ like the following:
         |-- example.tar.gz
 ```
 
-*The paths marked with a \* are required.*
+*The paths marked with a &ast; are required.*
 
 Running `bsw.py` will read the main site template from `templates/base.html`
 and find all the .htm and .html files in `pages/`. The structure of `pages/`
