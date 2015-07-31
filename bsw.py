@@ -3,6 +3,8 @@ import argparse
 import os
 import re
 import shutil
+import SimpleHTTPServer
+import SocketServer
 
 OUT_DIR = os.path.abspath(os.path.join(".", "build"))
 
@@ -96,11 +98,33 @@ def clean_build_path():
         shutil.rmtree(OUT_DIR)
 
 
+def serve_content():
+    """Serve rendered content on SimpleHTTPServer. This helps with absolute
+    file paths such as /static/css/main.css, which wouldn't work
+    properly if opened directly in from file:///"""
+    PORT = 8000
+    os.chdir(OUT_DIR)
+    Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+
+    # Allow us to quickly kill and restart server without waiting for TCP
+    # socket to close down completely
+    SocketServer.TCPServer.allow_reuse_address = 1
+    httpd = SocketServer.TCPServer(("", PORT), Handler)
+    print("Serving content at localhost: " + str(PORT))
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("Exiting")
+        quit()
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="bsw - build static website")
     parser.add_argument("-C", "--clean", action="store_true",
                         help="remove existing build folder before building")
+    parser.add_argument("-s", "--http-server", action="store_true",
+                        help="serve content with SimpleHTTPServer after build")
     args = parser.parse_args()
 
     if args.clean:
@@ -118,3 +142,6 @@ if __name__ == "__main__":
     print("Copying site assets")
     copy_site_assets()
     print("Static site build complete")
+
+    if args.http_server:
+        serve_content()
