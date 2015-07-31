@@ -25,14 +25,14 @@ like the following:
 
 ```
 ./
-|-- \*pages/ 
+|-- *pages/ 
     |-- index.html
     |-- about/
         |-- index.html
     |-- project/
         |-- index.html
-|-- \*templates/ 
-    |-- \*base.html
+|-- *templates/ 
+    |-- *base.html
     |-- static/
         |-- css/
             |-- main.css
