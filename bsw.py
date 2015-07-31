@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import argparse
 import os
 import re
 import shutil
@@ -89,7 +90,23 @@ def copy_site_assets():
         merge_dirs("static", os.path.join(OUT_DIR, "static"))
 
 
+def clean_build_path():
+    """Remove build folder if it exists"""
+    if os.path.isdir(OUT_DIR):
+        shutil.rmtree(OUT_DIR)
+
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="bsw - build static website")
+    parser.add_argument("-C", "--clean", action="store_true",
+                        help="remove existing build folder before building")
+    args = parser.parse_args()
+
+    print(args.clean)
+    if args.clean:
+        clean_build_path()
+
     create_out_dir()
     print("Colecting source pages")
     pages = collect_pages()
