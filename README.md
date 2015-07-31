@@ -5,10 +5,17 @@ Build Static Website - a simple static website generator
 ## Usage (the short version)
 
 ```
-$ bsw.py
+usage: bsw.py [-h] [-C] [-s]
+
+bsw - build static website
+
+optional arguments:
+    -h, --help         show this help message and exit
+    -C, --clean        remove existing build folder before building
+    -s, --http-server  serve content with SimpleHTTPServer after build
 ```
 
-As simple as that.
+Nice and simple.
 
 
 ## Usage (the longer version)
