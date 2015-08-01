@@ -62,7 +62,6 @@ def replace_includes(page_data):
     for match in matches:
         include_data = get_include_data(match)
         regex_this_include = "<!--\s+include\(\"{0}\"\)\s+-->".format(match)
-        print(regex_this_include)
         page_data = re.sub(regex_this_include, include_data, page_data)
     return page_data
 
