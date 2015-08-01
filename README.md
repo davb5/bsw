@@ -17,48 +17,73 @@ optional arguments:
 
 Nice and simple.
 
+## Getting Started
 
-## Usage (the longer version)
+bsw works primarily on the current directory, and expects a couple of
+folders to exist:
 
-bsw works on the current directory. It expects a directory structure
-like the following:
+* pages
+* templates
+
+To get started, we'll need to create these folders and add a base
+template (the primary site template) to the *templates* folder.
 
 ```
-./
-|-- *pages/ 
-    |-- index.html
-    |-- about/
-        |-- index.html
-    |-- project/
-        |-- index.html
-|-- *templates/ 
-    |-- *base.html
-    |-- static/
-        |-- css/
-            |-- main.css
-        |-- images/
-            |-- site_logo.png
-|-- static/
-    |-- images/
-        |-- post_screenshot_example.png
-    |-- files/
-        |-- example.tar.gz
+$ mkdir pages
+$ mkdir templates
+$ echo <<EOF > templates/base.html
+> <html>
+> <head><title>\$page_title</title></head>
+> <body>
+> \$page_content
+> </body>
+> </html>
+> EOF
 ```
 
-*The paths marked with a &ast; are required.*
+bsw will read all the \*.html and \*.htm files inside the `pages` directory
+(recursively) and render them using the base template. The rendered pages
+will then be saved to the `build` folder (which will be created if needed).
 
-Running `bsw.py` will read the main site template from `templates/base.html`
-and find all the .htm and .html files in `pages/`. The structure of `pages/`
-will be recreated in `build/` (creating `build/` if needed), with each page
-rendered using the base template.
+When pages are rendered using templates, the template placeholders
+(e.g. `$page_title`) are replaced with page variables (declared like
+`<!-- page_title = "my page title" -->`). The special `$page_content`
+placeholder is replaced with the page content itself (the body of the
+`pages/*.html` file).
 
-Any files in `static/` and `templates/static/` will be copied to
-`build/static/`.
+Let's create an example page:
 
-By default, existing html pages will always be regenerated (overwritten) but
-static files will not.
+```
+$ mkdir pages/about
+$ echo <<EOF > pages/about/index.html
+> <!-- page_title = "about this site" -->
+> <h1>About this site</h1>
+> <p>This is our example site, built with bsw.</p>
+> EOF
+```
 
-The static folders are completely optional.
+By naming the file `index.html` and putting that inside a folder names
+`about` we can access the page using the prettier URL
+`http://localhost:8000/about` (rather than `about.html`).
+
+Now that we have some sample content, we can build the website:
+
+```
+$ bsw.py -s
+```
+
+The `-s` flag tells bsw to start a web server on port 8000 after building
+the site. We can then access our about page via
+<a href="http://localhost:8000/about">http://localhost:8000/about</a>.
+
+
+## Static content
+
+bsw will copy any files in `static/` and `templates/static/` to
+`build/static/` (the output root) where they can easily be
+referenced by your page or template content.
+
+Static folders are completely optional.
 
 
 # FAQ
@@ -70,10 +95,10 @@ The static folders are completely optional.
 * static/
 * templates/static/
 
-The reason for this is simple - it allows you to keep your template statics
-separate from your page/post/site statics. This makes it easier to reuse
-your template on other sites. However, the user of either (or both) static
-folders is completely optional.
+This allows you to keep your template static files separate from your
+page static files, making it easier to reuse your template on other sites.
+
+However, the user of either (or both) static folders is completely optional.
 
 
 ## How do I create a template?
