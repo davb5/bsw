@@ -35,7 +35,7 @@ def render_pages(pages):
     for page in pages:
         with open(os.path.join("pages", page), "r") as page_file:
             page_data = page_file.read()
-            page_vars = get_page_vars(page_data)
+            (page_data, page_vars) = get_and_strip_page_vars(page_data)
             rendered_page = base_template.replace("$page_content", page_data)
             rendered_page = replace_includes(rendered_page)
             for page_var in page_vars:
@@ -44,14 +44,18 @@ def render_pages(pages):
     return rendered_pages
 
 
-def get_page_vars(page_data):
-    """Returns a dictionary of <!-- $var = "value" --> pairs from page data"""
+def get_and_strip_page_vars(page_data):
+    """Returns a tuple of page_data (with page vars stripped) and
+    dictionary of <!-- $var = "value" --> pairs from page data
+    """
     regex_var_capture = "<!--\s+(\w+)\s+=\s+\"([^>]*)\"\s+-->"
     matches = re.findall(regex_var_capture, page_data)
     page_vars = {}
     for match in matches:
         page_vars[match[0]] = match[1]
-    return page_vars
+        regex_this_var = "<!--\s+(\{0})\s+=\s+\"({1})\"\s+-->".format(match[0], match[1])
+        page_data = re.sub(regex_this_var, "", page_data)
+    return (page_data, page_vars)
 
 
 def replace_includes(page_data):
