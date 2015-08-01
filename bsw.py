@@ -37,6 +37,7 @@ def render_pages(pages):
             page_data = page_file.read()
             page_vars = get_page_vars(page_data)
             rendered_page = base_template.replace("$page_content", page_data)
+            rendered_page = replace_includes(rendered_page)
             for page_var in page_vars:
                 rendered_page = rendered_page.replace("$" + page_var, page_vars[page_var])
             rendered_pages.append({"filename": page, "content": rendered_page})
@@ -51,6 +52,37 @@ def get_page_vars(page_data):
     for match in matches:
         page_vars[match[0]] = match[1]
     return page_vars
+
+
+def replace_includes(page_data):
+    """Replace <!-- include("my_include.html") --> directives with the
+    referenced file"""
+    regex_include = "<!--\s+include\(\"([^>]*)\"\)\s+-->"
+    matches = re.findall(regex_include, page_data)
+    for match in matches:
+        include_data = get_include_data(match)
+        regex_this_include = "<!--\s+include\(\"{0}\"\)\s+-->".format(match)
+        print(regex_this_include)
+        page_data = re.sub(regex_this_include, include_data, page_data)
+    return page_data
+
+
+include_cache = {}
+def get_include_data(include_filename):
+    """Get include file data (cached)"""
+    if include_filename in include_cache:
+        return include_cache[include_filename]
+
+    include_full_filename = os.path.join("templates", "includes", include_filename)
+    if not os.path.isfile(include_full_filename):
+        print("Error: Included file {0} not found".format(include_filename))
+        exit(1)
+
+    with open(include_full_filename, "r") as include_file:
+        include_file_data = include_file.read()
+
+    include_cache[include_filename] = include_file_data
+    return include_file_data
 
 
 def write_pages(rendered_pages):

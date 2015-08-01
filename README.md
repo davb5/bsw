@@ -86,6 +86,32 @@ referenced by your page or template content.
 Static folders are completely optional.
 
 
+## Includes
+
+You can include reusable pieces of markup by using *include* directives.
+You must place all includes in `templates/includes/`.
+
+For example, let's create an include with a link to the bsw project
+repository on GitHub:
+
+```
+$ mkdir templates/includes
+$ echo <<EOF > templates/include/github_links.html
+> <p>
+> <a href="https://github.com/davb5/bsw">github.com/davb5/bsw</a>
+> </p>
+> EOF
+```
+
+We can now reference this include from any of our page or template
+files by adding the following directive to the page markup:
+
+
+```
+<!-- include("github_links.html") -->
+```
+
+
 # FAQ
 
 ## Why are there two static folders?
