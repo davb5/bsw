@@ -12,7 +12,7 @@ bsw - build static website
 optional arguments:
     -h, --help         show this help message and exit
     -C, --clean        remove existing build folder before building
-    -s, --http-server  serve content with SimpleHTTPServer after build
+    -s, --http-server  serve content after build (default port 8000)
 ```
 
 Nice and simple.

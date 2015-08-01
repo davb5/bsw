@@ -124,7 +124,7 @@ if __name__ == "__main__":
     parser.add_argument("-C", "--clean", action="store_true",
                         help="remove existing build folder before building")
     parser.add_argument("-s", "--http-server", action="store_true",
-                        help="serve content with SimpleHTTPServer after build")
+                        help="serve content after build (default port 8000)")
     args = parser.parse_args()
 
     if args.clean:
