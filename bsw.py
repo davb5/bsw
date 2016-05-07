@@ -158,6 +158,7 @@ def check_required_paths():
     template_path = os.path.join(".", "templates", "base.html")
     if not os.path.exists(template_path):
         print("ERROR: base template (templates/base.html) not found")
+        print("Did you remember to create the 'templates' folder and 'base.html' template?")
         exit()
 
 
