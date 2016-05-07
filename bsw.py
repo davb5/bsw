@@ -153,6 +153,14 @@ def serve_content():
         quit()
 
 
+def check_required_paths():
+    """Check that the required bsw project paths exist"""
+    template_path = os.path.join(".", "templates", "base.html")
+    if not os.path.exists(template_path):
+        print("ERROR: base template (templates/base.html) not found")
+        exit()
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="bsw - build static website")
@@ -164,6 +172,8 @@ if __name__ == "__main__":
 
     if args.clean:
         clean_build_path()
+
+    check_required_paths()
 
     create_out_dir()
     print("Colecting source pages")
