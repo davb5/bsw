@@ -62,9 +62,9 @@ $ echo <<EOF > pages/about/index.html
 > EOF
 ```
 
-By naming the file `index.html` and putting that inside a folder names
-`about` we can access the page using the prettier URL
-`http://localhost:8000/about` (rather than `about.html`).
+Creating the page at `pages/about/index.html` allows us to 
+access the page using the prettier URL
+`/about` (rather than `about.html`).
 
 Now that we have some sample content, we can build the website:
 
