@@ -1,4 +1,41 @@
-#!/usr/bin/env python
+"""bsw - Build Static Website
+
+A simple static website generator operating on the current directory and
+building static websites from pages and templates.
+
+Your project folder should be structured as follows:
+    pages/
+    templates/
+        base.html
+
+An example layout would be:
+    pages/
+        about/
+            index.html
+        index.html
+    templates/
+        static/
+            site_logo.png
+        includes/
+            social_media_links.html
+        base.html
+        blog.html
+    static/
+        images/
+            blog_header_20160101.png
+
+
+This example has a base template (base.html), a blog template (blog.html),
+an includes file with social media links (social_media_links.html),
+and default site page (index.html) and an about page (about/index.html).
+
+Static files from both the site statics (static/) and template statics
+(templates/static/) folders are combined into the build/ folder
+(automatically created when the site is first generated).
+
+The structure in pages/ is preserved and cloned to the build/ folder.
+"""
+
 import argparse
 import os
 import SimpleHTTPServer
@@ -74,7 +111,7 @@ def build_static_web(clean_build_path):
     print("Static site build complete.")
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         description="bsw - build static website")
     parser.add_argument("-C", "--clean", action="store_true",
