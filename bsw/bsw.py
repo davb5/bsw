@@ -132,9 +132,22 @@ def main():
         description="bsw - build static website")
     parser.add_argument("-C", "--clean", action="store_true",
                         help="remove existing build folder before building")
-    parser.add_argument("-s", "--http-server", action="store_true",
+    parser.add_argument("-s", "--serve", action="store_true",
                         help="serve content after build (default port 8000)")
+    parser.add_argument("--init", 
+                        help="initialise a new bsw site as the specified path")
+    parser.add_argument("--template", 
+                        help="built-in template to use with --init")
     args = parser.parse_args()
+
+    if (args.clean and args.init):
+        print("Error: Please specify either --clean or --init")
+        sys.exit(1)
+
+    if args.init:
+        file_manager = files.FileManager(OUT_DIR)
+        template = args.template if args.template else "default"
+        file_manager.init_with_template(template, args.init)
 
     clean_build_path = False
     if args.clean:
@@ -142,5 +155,5 @@ def main():
 
     build_static_web(clean_build_path)
 
-    if args.http_server:
+    if args.serve:
         serve_content()
