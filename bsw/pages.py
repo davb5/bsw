@@ -3,7 +3,7 @@
 import os
 import re
 
-import templates
+from . import templates
 
 
 class Page:

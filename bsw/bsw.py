@@ -38,13 +38,21 @@ The structure in pages/ is preserved and cloned to the build/ folder.
 
 import argparse
 import os
-import SimpleHTTPServer
-import SocketServer
+
+try:
+    # Python 3
+    import http.server
+    import socketserver
+except ImportError:
+    # Python 2
+    import SimpleHTTPServer
+    import SocketServer
+
 import sys
 
-import files
-import pages
-import templates
+from . import files
+from . import pages
+from . import templates
 
 OUT_DIR = os.path.abspath(os.path.join(".", "build"))
 
@@ -55,12 +63,20 @@ def serve_content():
     properly if opened directly in from file:///"""
     PORT = 8000
     os.chdir(OUT_DIR)
-    Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
 
     # Allow us to quickly kill and restart server without waiting for TCP
     # socket to close down completely
-    SocketServer.TCPServer.allow_reuse_address = 1
-    httpd = SocketServer.TCPServer(("", PORT), Handler)
+    try:
+        # Python 3
+        handler = http.server.SimpleHTTPRequestHandler
+        socketserver.TCPServer.allow_reuse_address = 1
+        httpd = socketserver.TCPServer(("", PORT), handler)
+    except NameError:
+        # Python 2
+        handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+        SocketServer.TCPServer.allow_reuse_address = 1
+        httpd = SocketServer.TCPServer(("", PORT), handler)
+
     print("Serving content at localhost: " + str(PORT))
     try:
         httpd.serve_forever()
