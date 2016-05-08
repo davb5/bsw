@@ -55,3 +55,15 @@ class FileManager(object):
         if not os.path.exists(template_path):
             raise IOError("Base template (templates/base.html) "
                                     "not found")
+
+    def init_with_template(self, template_name, destination):
+        """Initialise the destination folder with the specified template
+        skeleton.
+        """
+        module_path = os.path.dirname(os.path.abspath(__file__))
+        template_path = os.path.join(module_path, "templates", template_name)
+        
+        if not os.path.exists(template_path):
+            raise IOError("Template {0} not found".format(template_name))
+
+        self.merge_dirs(template_path, destination)
