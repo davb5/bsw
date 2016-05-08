@@ -1,5 +1,5 @@
 # bsw
-Build Static Website - a simple static website generator
+bsw - Build Static Website, a simple static website generator.
 
 
 ## Usage (the short version)

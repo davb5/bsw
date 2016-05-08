@@ -1,3 +1,5 @@
+"""bsw template handling functions"""
+
 import os
 
 template_cache = {}
