@@ -9,6 +9,7 @@ import sys
 
 OUT_DIR = os.path.abspath(os.path.join(".", "build"))
 templates = {}
+include_cache = {}
 
 
 def collect_pages():
@@ -111,9 +112,6 @@ def replace_includes(page_data):
         regex_this_include = "<!--\s+include\(\"{0}\"\)\s+-->".format(match)
         page_data = re.sub(regex_this_include, include_data, page_data)
     return page_data
-
-
-include_cache = {}
 
 
 def get_include_data(include_filename):
