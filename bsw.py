@@ -87,8 +87,9 @@ def get_template(template_path):
 
 
 def get_and_strip_page_vars(page_data):
-    """Returns a tuple of page_data (with page vars stripped) and
-    dictionary of <!-- $var = "value" --> pairs from page data
+    """Returns a tuple of (page_data, [page_vars]) where page data
+    has had vars stripped and page_vars is a list of dictionaries of
+    {var: value}
     """
     regex_var_capture = "<!--\s+(\w+)\s+=\s+\"([^>]*)\"\s+-->"
     matches = re.findall(regex_var_capture, page_data)
