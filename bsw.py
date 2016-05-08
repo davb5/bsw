@@ -42,6 +42,18 @@ def load_pages(pages):
     return loaded_pages
 
 
+def check_templates_exist(pages):
+    """Checks that all templates exist, exits with error if any are missing"""
+    errored = False
+    for page in pages:
+        if "template" in page["page_vars"]:
+            if not os.path.exists(os.path.join(".", "templates", page["page_vars"]["template"])):
+                print("ERROR: Template '{0}' not found".format(page["page_vars"]["template"]))
+                errored = True
+    if errored:
+        exit()
+
+
 def render_pages(pages):
     """Render pages to HTML using templates
 
@@ -213,6 +225,7 @@ if __name__ == "__main__":
 
     print("Loading pages")
     pages_with_data = load_pages(pages)
+    check_templates_exist(pages_with_data)
 
     print("Rendering pages with template")
     rendered_pages = render_pages(pages_with_data)
