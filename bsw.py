@@ -101,7 +101,7 @@ def replace_includes(page_data):
 
 include_cache = {}
 def get_include_data(include_filename):
-    """Get include file data (cached)"""
+    """Memoized function to get include file data"""
     if include_filename in include_cache:
         return include_cache[include_filename]
 
