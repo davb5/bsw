@@ -40,7 +40,8 @@ def build_static_web(clean_build_path):
         file_manager.check_required_paths()
     except IOError as ex:
         print("Error: {0}".format(ex))
-        print("Did you remember to create the 'templates' folder and 'base.html' template?")
+        print("Did you remember to create the 'templates' folder and "
+              "'base.html' template?")
         sys.exit(1)
 
     if (clean_build_path):

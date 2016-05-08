@@ -26,7 +26,8 @@ class FileManager(object):
                 source_path_dir = os.path.dirname(source_path_rel)
                 if not os.path.isdir(os.path.join(dest_path, source_path_dir)):
                     os.makedirs(os.path.join(dest_path, source_path_dir))
-                if not os.path.isfile(os.path.join(dest_path, source_path_rel)):
+                if not os.path.isfile(os.path.join(dest_path,
+                                                   source_path_rel)):
                     shutil.copyfile(source_path_file, os.path.join(dest_path,
                         source_path_rel))
 
@@ -50,4 +51,5 @@ class FileManager(object):
         """Check that the required bsw project paths exist"""
         template_path = os.path.join(".", "templates", "base.html")
         if not os.path.exists(template_path):
-            raise FileNotFoundError("Base template (templates/base.html) not found")
+            raise FileNotFoundError("Base template (templates/base.html) "
+                                    "not found")

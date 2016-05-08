@@ -65,7 +65,7 @@ class Page:
         self.replace_includes()
         for page_var in self.page_vars:
             self.rendered_page = self.rendered_page.replace("$" + page_var,
-                    self.page_vars[page_var])
+                                                            self.page_vars[page_var])
 
 
 def collect_pages():
