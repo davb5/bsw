@@ -5,6 +5,7 @@ import re
 import shutil
 import SimpleHTTPServer
 import SocketServer
+import sys
 
 OUT_DIR = os.path.abspath(os.path.join(".", "build"))
 templates = {}
@@ -51,7 +52,7 @@ def check_templates_exist(pages):
                 print("ERROR: Template '{0}' not found".format(page["page_vars"]["template"]))
                 errored = True
     if errored:
-        exit()
+        sys.exit(1)
 
 
 def render_pages(pages):
@@ -120,7 +121,7 @@ def get_include_data(include_filename):
     include_full_filename = os.path.join("templates", "includes", include_filename)
     if not os.path.isfile(include_full_filename):
         print("Error: Included file {0} not found".format(include_filename))
-        exit(1)
+        sys.exit(1)
 
     with open(include_full_filename, "r") as include_file:
         include_file_data = include_file.read()
@@ -191,7 +192,7 @@ def serve_content():
         httpd.serve_forever()
     except KeyboardInterrupt:
         print("Exiting")
-        quit()
+        sys.exit()
 
 
 def check_required_paths():
@@ -200,7 +201,7 @@ def check_required_paths():
     if not os.path.exists(template_path):
         print("ERROR: base template (templates/base.html) not found")
         print("Did you remember to create the 'templates' folder and 'base.html' template?")
-        exit()
+        sys.exit(1)
 
 
 if __name__ == "__main__":
