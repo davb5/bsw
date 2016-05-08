@@ -114,6 +114,8 @@ def replace_includes(page_data):
 
 
 include_cache = {}
+
+
 def get_include_data(include_filename):
     """Memoized function to get include file data"""
     if include_filename in include_cache:
@@ -220,7 +222,6 @@ if __name__ == "__main__":
     check_required_paths()
 
     create_out_dir()
-
 
     print("Colecting source pages")
     pages = collect_pages()
