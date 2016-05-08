@@ -53,5 +53,5 @@ class FileManager(object):
         """Check that the required bsw project paths exist"""
         template_path = os.path.join(".", "templates", "base.html")
         if not os.path.exists(template_path):
-            raise FileNotFoundError("Base template (templates/base.html) "
+            raise IOError("Base template (templates/base.html) "
                                     "not found")
