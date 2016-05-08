@@ -7,6 +7,7 @@ import SimpleHTTPServer
 import SocketServer
 
 OUT_DIR = os.path.abspath(os.path.join(".", "build"))
+templates = {}
 
 
 def collect_pages():
@@ -25,23 +26,51 @@ def create_out_dir():
         os.makedirs(OUT_DIR)
 
 
-def render_pages(pages):
-    """Render pages to HTML using templates"""
-    base_template = None
-    with open(os.path.join(".", "templates", "base.html"), "r") as base_template_file:
-        base_template = base_template_file.read()
+def load_pages(pages):
+    """Load pages and extract page variables
 
-    rendered_pages = []
+    Expects list of file paths
+    Returns list of dictionaries of {filename, page_data, [page_vars]}
+    """
+    loaded_pages = []
+
     for page in pages:
         with open(os.path.join("pages", page), "r") as page_file:
             page_data = page_file.read()
             (page_data, page_vars) = get_and_strip_page_vars(page_data)
-            rendered_page = base_template.replace("$page_content", page_data)
-            rendered_page = replace_includes(rendered_page)
-            for page_var in page_vars:
-                rendered_page = rendered_page.replace("$" + page_var, page_vars[page_var])
-            rendered_pages.append({"filename": page, "content": rendered_page})
+            loaded_pages.append({"filename": page, "page_data": page_data, "page_vars": page_vars})
+    return loaded_pages
+
+
+def render_pages(pages):
+    """Render pages to HTML using templates
+
+    Expects list of dictionaries of {filename, page_data, [page_vars]}
+    Returns list of dictionaries of {filename, rendered_page_content}
+    """
+    rendered_pages = []
+    for page in pages:
+        if "template" in page["page_vars"]:
+            template = get_template(page["page_vars"]["template"])
+        else:
+            template = get_template("base.html")
+
+        rendered_page = template.replace("$page_content", page["page_data"])
+        rendered_page = replace_includes(rendered_page)
+        for page_var in page["page_vars"]:
+            rendered_page = rendered_page.replace("$" + page_var, page["page_vars"][page_var])
+        rendered_pages.append({"filename": page["filename"], "content": rendered_page})
     return rendered_pages
+
+
+def get_template(template_path):
+    """Memoized function to get page template.
+    Loads templates as neccessary.
+    """
+    if template_path not in templates:
+        with open(os.path.join(".", "templates", template_path), "r") as template_file:
+            templates[template_path] = template_file.read()
+    return templates[template_path]
 
 
 def get_and_strip_page_vars(page_data):
@@ -177,16 +206,26 @@ if __name__ == "__main__":
     check_required_paths()
 
     create_out_dir()
+
+
     print("Colecting source pages")
     pages = collect_pages()
+
+    print("Loading pages")
+    pages_with_data = load_pages(pages)
+
     print("Rendering pages with template")
-    rendered_pages = render_pages(pages)
+    rendered_pages = render_pages(pages_with_data)
+
     print("Writing pages")
     write_pages(rendered_pages)
+
     print("Copying template assets")
     copy_template_assets()
+
     print("Copying site assets")
     copy_site_assets()
+
     print("Static site build complete")
 
     if args.http_server:
