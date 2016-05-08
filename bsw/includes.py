@@ -1,3 +1,5 @@
+"""bsw include handling functions"""
+
 include_cache = {}
 
 

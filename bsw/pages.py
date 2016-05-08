@@ -1,3 +1,5 @@
+"""bsw page model and functions"""
+
 import os
 import re
 

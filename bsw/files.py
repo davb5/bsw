@@ -1,3 +1,5 @@
+"""bsw file management functions"""
+
 import shutil
 import os
 
