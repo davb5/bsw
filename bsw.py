@@ -96,7 +96,7 @@ def get_and_strip_page_vars(page_data):
     page_vars = {}
     for match in matches:
         page_vars[match[0]] = match[1]
-        regex_this_var = "<!--\s+(\{0})\s+=\s+\"({1})\"\s+-->".format(match[0], match[1])
+        regex_this_var = "<!--\s+({0})\s+=\s+\"({1})\"\s+-->".format(match[0], match[1])
         page_data = re.sub(regex_this_var, "", page_data)
     return (page_data, page_vars)
 
