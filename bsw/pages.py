@@ -11,27 +11,23 @@ class Page:
         self.body_raw = None  # The un-transformed page body
         self.rendered_page = None  # Finished page rendered with template
         self.page_vars = {}
-    
 
     def load_and_parse(self):
         self.load()
         self.extract_vars()
         self.strip_vars()
 
-
     def load(self):
         """Load page from file."""
         with open(os.path.join("pages", self.filename), "r") as page_file:
             self.body_raw = page_file.read()
 
-    
     def extract_vars(self):
         """Populate self.vars with vars extracted from page."""
         regex_var_capture = "<!--\s+(\w+)\s+=\s+\"([^>]*)\"\s+-->"
         matches = re.findall(regex_var_capture, self.body_raw)
         for match in matches:
             self.page_vars[match[0]] = match[1]
-
 
     def strip_vars(self):
         """Strip page vars from raw body and populate self.body."""
@@ -42,7 +38,6 @@ class Page:
                                 self.page_vars[page_var])
             page_data = re.sub(regex_this_var, "", page_data)
         self.body = page_data
-
 
     def replace_includes(self):
         """Replace <!-- include("my_include.html") --> directives with the
@@ -56,7 +51,6 @@ class Page:
             self.rendered_page = re.sub(regex_this_include,
                                         include_data,
                                         self.rendered_page)
-
 
     def render(self):
         """Render page using template, insert any includes and do page
@@ -84,7 +78,7 @@ def collect_pages():
             if filename.endswith(".html") or filename.endswith(".htm"):
                 page_paths.append(
                     os.path.join(dirpath, filename).split(
-                                    os.path.sep,1)[1])
+                                    os.path.sep, 1)[1])
 
     for page_path in page_paths:
         new_page = Page(page_path)
@@ -101,4 +95,3 @@ def write_pages(pages, out_dir):
             os.makedirs(os.path.join(out_dir, os.path.dirname(page.filename)))
         with open(os.path.join(out_dir, page.filename), "w") as out_file:
             out_file.write(page.rendered_page)
-

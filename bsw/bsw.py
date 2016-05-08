@@ -71,7 +71,7 @@ def build_static_web(clean_build_path):
     file_manager.copy_site_assets()
 
     print("Static site build complete.")
-    
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
