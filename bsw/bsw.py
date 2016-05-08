@@ -93,8 +93,7 @@ def build_static_web(clean_build_path):
         file_manager.check_required_paths()
     except IOError as ex:
         print("Error: {0}".format(ex))
-        print("Did you remember to create the 'templates' folder and "
-              "'base.html' template?")
+        print("Did you remember to initialise the site with --init?")
         sys.exit(1)
 
     if (clean_build_path):
@@ -135,7 +134,10 @@ def main():
     parser.add_argument("-s", "--serve", action="store_true",
                         help="serve content after build (default port 8000)")
     parser.add_argument("--init", 
-                        help="initialise a new bsw site as the specified path")
+                        help="initialise a new bsw site as the specified path",
+                        nargs="?",
+                        const=".",
+                        metavar="PATH")
     parser.add_argument("--template", 
                         help="built-in template to use with --init")
     args = parser.parse_args()
@@ -144,10 +146,20 @@ def main():
         print("Error: Please specify either --clean or --init")
         sys.exit(1)
 
+    if (args.serve and args.init):
+        print("Error: Please specify either --serve or --init")
+        sys.exit(1)
+
+    if (args.template and not args.init):
+        print("Error: --template can only be used with --init")
+        sys.exit(1)
+
     if args.init:
         file_manager = files.FileManager(OUT_DIR)
         template = args.template if args.template else "default"
         file_manager.init_with_template(template, args.init)
+        print("bsw site initialised")
+        sys.exit(0)
 
     clean_build_path = False
     if args.clean:
