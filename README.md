@@ -19,7 +19,7 @@ Nice and simple.
 
 ## Getting Started
 
-bsw works primarily on the current directory, and expects a couple of
+bsw works on the current directory, and expects a couple of
 folders to exist:
 
 * pages
@@ -45,11 +45,12 @@ bsw will read all the \*.html and \*.htm files inside the `pages` directory
 (recursively) and render them using the base template. The rendered pages
 will then be saved to the `build` folder (which will be created if needed).
 
-When pages are rendered using templates, the template placeholders
-(e.g. `$page_title`) are replaced with page variables (declared like
-`<!-- page_title = "my page title" -->`). The special `$page_content`
-placeholder is replaced with the page content itself (the body of the
-`pages/*.html` file).
+Template placeholders (e.g. `$page_title`) are replaced with page variables
+from the page content file. These are declared like
+`<!-- page_title = "my page title" -->`.
+
+The special `$page_content` placeholder is replaced with the page content
+itself (the body of the `pages/*.html` file).
 
 Let's create an example page:
 
@@ -63,8 +64,7 @@ $ echo <<EOF > pages/about/index.html
 ```
 
 Creating the page at `pages/about/index.html` allows us to 
-access the page using the prettier URL
-`/about` (rather than `about.html`).
+access the page using the pretty URL `/about` (rather than `about.html`).
 
 Now that we have some sample content, we can build the website:
 
@@ -80,15 +80,19 @@ the site. We can then access our about page via
 ## Static content
 
 bsw will copy any files in `static/` and `templates/static/` to
-`build/static/` (the output root) where they can easily be
-referenced by your page or template content.
+to the combined `build/static/` folder where they can easily be
+referenced by your page or template content. For example, include
+the `templates/static/logo.png` file on your template or page as
+so: `<img src="/static/logo.png">`.
 
-Static folders are completely optional.
+Static folders are completely optional and both template and site
+statics are accessed from the same combined folder.
 
 
 ## Includes
 
 You can include reusable pieces of markup by using *include* directives.
+
 You must place all includes in `templates/includes/`.
 
 For example, let's create an include with a link to the bsw project
@@ -124,13 +128,15 @@ files by adding the following directive to the page markup:
 This allows you to keep your template static files separate from your
 page static files, making it easier to reuse your template on other sites.
 
-However, the user of either (or both) static folders is completely optional.
+However, the use of either (or both) static folders is completely optional.
 
 
 ## How do I create a template?
 
-Templates are extemely simple. Currently, only one template
-(`templates/base.html`) is loaded and it requires only a single tag:
+Templates are extemely simple. The default template for any page which doesn't
+explicitly specify a template is `templates/base.html`.
+
+It requires only a single tag:
 
 ```
 $page_content
@@ -156,3 +162,16 @@ in a comment in the page markup, as follows:
 ```
 
 *The only template tag which is required is the `$page_content` tag.*
+
+
+## How do I use multiple templates?
+
+Additional templates can be created in the `templates` folder and referenced
+from pages by using the special `template` page variable as so:
+`<!-- template = "my_special_case_template.html" -->`
+
+The `<!-- template ... -->` variable can appear anywhere in the page content (it
+doesn't need to be placed at the top of the file).
+
+Any page which doesn't explicitly specify a template will use the *base template*
+`templates/base.html`.
