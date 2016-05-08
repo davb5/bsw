@@ -5,8 +5,10 @@ import re
 import shutil
 import SimpleHTTPServer
 import SocketServer
+import sys
 
 OUT_DIR = os.path.abspath(os.path.join(".", "build"))
+templates = {}
 
 
 def collect_pages():
@@ -25,28 +27,69 @@ def create_out_dir():
         os.makedirs(OUT_DIR)
 
 
-def render_pages(pages):
-    """Render pages to HTML using templates"""
-    base_template = None
-    with open(os.path.join(".", "templates", "base.html"), "r") as base_template_file:
-        base_template = base_template_file.read()
+def load_pages(pages):
+    """Load pages and extract page variables
 
-    rendered_pages = []
+    Expects list of file paths
+    Returns list of dictionaries of {filename, page_data, [page_vars]}
+    """
+    loaded_pages = []
+
     for page in pages:
         with open(os.path.join("pages", page), "r") as page_file:
             page_data = page_file.read()
             (page_data, page_vars) = get_and_strip_page_vars(page_data)
-            rendered_page = base_template.replace("$page_content", page_data)
-            rendered_page = replace_includes(rendered_page)
-            for page_var in page_vars:
-                rendered_page = rendered_page.replace("$" + page_var, page_vars[page_var])
-            rendered_pages.append({"filename": page, "content": rendered_page})
+            loaded_pages.append({"filename": page, "page_data": page_data, "page_vars": page_vars})
+    return loaded_pages
+
+
+def check_templates_exist(pages):
+    """Checks that all templates exist, exits with error if any are missing"""
+    errored = False
+    for page in pages:
+        if "template" in page["page_vars"]:
+            if not os.path.exists(os.path.join(".", "templates", page["page_vars"]["template"])):
+                print("ERROR: Template '{0}' not found".format(page["page_vars"]["template"]))
+                errored = True
+    if errored:
+        sys.exit(1)
+
+
+def render_pages(pages):
+    """Render pages to HTML using templates
+
+    Expects list of dictionaries of {filename, page_data, [page_vars]}
+    Returns list of dictionaries of {filename, rendered_page_content}
+    """
+    rendered_pages = []
+    for page in pages:
+        if "template" in page["page_vars"]:
+            template = get_template(page["page_vars"]["template"])
+        else:
+            template = get_template("base.html")
+
+        rendered_page = template.replace("$page_content", page["page_data"])
+        rendered_page = replace_includes(rendered_page)
+        for page_var in page["page_vars"]:
+            rendered_page = rendered_page.replace("$" + page_var, page["page_vars"][page_var])
+        rendered_pages.append({"filename": page["filename"], "content": rendered_page})
     return rendered_pages
 
 
+def get_template(template_path):
+    """Memoized function to get page template.
+    Loads templates as neccessary.
+    """
+    if template_path not in templates:
+        with open(os.path.join(".", "templates", template_path), "r") as template_file:
+            templates[template_path] = template_file.read()
+    return templates[template_path]
+
+
 def get_and_strip_page_vars(page_data):
-    """Returns a tuple of page_data (with page vars stripped) and
-    dictionary of <!-- $var = "value" --> pairs from page data
+    """Returns a tuple of (page_data, [page_vars]) where page data
+    has had vars stripped and page_vars is a list of dictionaries of
+    {var: value}
     """
     regex_var_capture = "<!--\s+(\w+)\s+=\s+\"([^>]*)\"\s+-->"
     matches = re.findall(regex_var_capture, page_data)
@@ -72,14 +115,14 @@ def replace_includes(page_data):
 
 include_cache = {}
 def get_include_data(include_filename):
-    """Get include file data (cached)"""
+    """Memoized function to get include file data"""
     if include_filename in include_cache:
         return include_cache[include_filename]
 
     include_full_filename = os.path.join("templates", "includes", include_filename)
     if not os.path.isfile(include_full_filename):
         print("Error: Included file {0} not found".format(include_filename))
-        exit(1)
+        sys.exit(1)
 
     with open(include_full_filename, "r") as include_file:
         include_file_data = include_file.read()
@@ -150,7 +193,7 @@ def serve_content():
         httpd.serve_forever()
     except KeyboardInterrupt:
         print("Exiting")
-        quit()
+        sys.exit()
 
 
 def check_required_paths():
@@ -159,7 +202,7 @@ def check_required_paths():
     if not os.path.exists(template_path):
         print("ERROR: base template (templates/base.html) not found")
         print("Did you remember to create the 'templates' folder and 'base.html' template?")
-        exit()
+        sys.exit(1)
 
 
 if __name__ == "__main__":
@@ -177,16 +220,27 @@ if __name__ == "__main__":
     check_required_paths()
 
     create_out_dir()
+
+
     print("Colecting source pages")
     pages = collect_pages()
+
+    print("Loading pages")
+    pages_with_data = load_pages(pages)
+    check_templates_exist(pages_with_data)
+
     print("Rendering pages with template")
-    rendered_pages = render_pages(pages)
+    rendered_pages = render_pages(pages_with_data)
+
     print("Writing pages")
     write_pages(rendered_pages)
+
     print("Copying template assets")
     copy_template_assets()
+
     print("Copying site assets")
     copy_site_assets()
+
     print("Static site build complete")
 
     if args.http_server:
