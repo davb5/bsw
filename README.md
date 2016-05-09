@@ -168,3 +168,11 @@ the contents of the build folder to somewhere accessible on your web server.
 
 Popular workflows include using rsync (copying only files which have changes)
 or git (handy if you already keep the site source content in a git repository).
+
+
+## I updated my template or CSS but the change isn't reflected in a new build. Why?
+
+By default, bsw won't overwrite existing files in your build folder. This is to
+avoid potentially longer build times on sites with lots of static content (for
+example, large images or downloads). Try running `bsw --clean` or manually
+delete the build file you'd like to regenerate.
