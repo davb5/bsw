@@ -23,6 +23,7 @@ with open("README.rst", "rb") as f:
 setup(
     name = "bsw",
     packages = ["bsw"],
+    include_package_data = True,
     entry_points = {
         "console_scripts": ["bsw = bsw.bsw:main"]
     },
