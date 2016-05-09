@@ -113,8 +113,8 @@ def build_static_web(clean_build_path):
         print("Error: {0}".format(ex))
         sys.exit(1)
 
-    print("Rendering pages...")
     for page in site_pages:
+        print("Rendering {0}...".format(page.filename))
         page.render()
     print("Writing pages...")
     pages.write_pages(site_pages, OUT_DIR)
