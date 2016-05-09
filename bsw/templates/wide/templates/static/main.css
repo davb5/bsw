@@ -21,7 +21,6 @@ body {
     font-size: 4em;
     font-weight: bold;
     min-height: 1em;
-    padding: 1.5em 0.2em;
     background-color: rgb(10, 58, 202);
     background: linear-gradient(to bottom right, rgb(50, 50, 230), rgb(50, 230, 120));
     color: rgb(255, 255, 255);
