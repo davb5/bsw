@@ -5,14 +5,16 @@ bsw - Build Static Website, a simple static website generator.
 ## Usage (the short version)
 
 ```
-usage: bsw.py [-h] [-C] [-s]
+usage: bsw_run.py [-h] [-C] [-s] [--init [PATH]] [--template TEMPLATE]
 
 bsw - build static website
 
 optional arguments:
-    -h, --help         show this help message and exit
-    -C, --clean        remove existing build folder before building
-    -s, --http-server  serve content after build (default port 8000)
+  -h, --help           show this help message and exit
+  -C, --clean          remove existing build folder before building
+  -s, --serve          serve content after build (default port 8000)
+  --init [PATH]        initialise a new bsw site as the specified path
+  --template TEMPLATE  built-in template to use with --init
 ```
 
 Nice and simple.
@@ -25,63 +27,45 @@ folders to exist:
 * pages
 * templates
 
-To get started, we'll need to create these folders and add a base
-template (the primary site template) to the *templates* folder.
+We can get up and running straight away by using the --init function to
+quickly create a new site using the default template. After we initialise
+the new site we'll cd into it and start a web server there so we can have
+a look.
 
 ```
-$ mkdir pages
-$ mkdir templates
-$ echo <<EOF > templates/base.html
-> <html>
-> <head><title>\$page_title</title></head>
-> <body>
-> \$page_content
-> </body>
-> </html>
-> EOF
+$ bsw --init mynewsite
+$ cd mynewsite
+$ bsw --serve
 ```
+
+Open <a href="http://localhost:8000/about">http://localhost:8000/about</a>
+in your browser and you'll see your new site, ready to go.
 
 bsw will read all the \*.html and \*.htm files inside the `pages` directory
-(recursively) and render them using the base template. The rendered pages
-will then be saved to the `build` folder (which will be created if needed).
+(recursively) and render them using the templates in the templates folder
+(using base.html by default if a page doesn't have a template directive).
+The rendered pages will then be saved to the `build` folder (which will be
+created if needed).
 
-Template placeholders (e.g. `$page_title`) are replaced with page variables
-from the page content file. These are declared like
-`<!-- page_title = "my page title" -->`.
+
+Variables in page (e.g. `<!-- page_title = "my page title" -->`) are placed
+into the templates at the placeholders (e.g. `$page_title`). It's easy to 
+add your own, and you can see a great example of this in the sample blog
+template and blog post.
 
 The special `$page_content` placeholder is replaced with the page content
 itself (the body of the `pages/*.html` file).
 
-Let's create an example page:
-
-```
-$ mkdir pages/about
-$ echo <<EOF > pages/about/index.html
-> <!-- page_title = "about this site" -->
-> <h1>About this site</h1>
-> <p>This is our example site, built with bsw.</p>
-> EOF
-```
-
-Creating the page at `pages/about/index.html` allows us to 
-access the page using the pretty URL `/about` (rather than `about.html`).
-
-Now that we have some sample content, we can build the website:
-
-```
-$ bsw.py -s
-```
-
-The `-s` flag tells bsw to start a web server on port 8000 after building
-the site. We can then access our about page via
-<a href="http://localhost:8000/about">http://localhost:8000/about</a>.
+The best way to learn the syntax is to take a look at the example pages
+and templates. They're purposefully very simple and should be easy to
+pick up.
 
 
 ## Static content
 
 bsw will copy any files in `static/` and `templates/static/` to
 to the combined `build/static/` folder where they can easily be
-referenced by your page or template content. For example, include
+referenced by your page or template content. For example, reference
 the `templates/static/logo.png` file on your template or page as
 so: `<img src="/static/logo.png">`.
 
@@ -175,3 +159,12 @@ doesn't need to be placed at the top of the file).
 
 Any page which doesn't explicitly specify a template will use the *base template*
 `templates/base.html`.
+
+
+## How do I deploy my site?
+
+Your hosting environment will vary, but deployment is as simple as copying
+the contents of the build folder to somewhere accessible on your web server.
+
+Popular workflows include using rsync (copying only files which have changes)
+or git (handy if you already keep the site source content in a git repository).
