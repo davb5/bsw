@@ -7,6 +7,7 @@ from bsw.pages import Page
 class TestPages(unittest.TestCase):
     test_page_filename = os.path.join(os.path.dirname(__file__),
                                       "data",
+                                      "pages",
                                       "test_page.html")
 
     def test_page_init(self):
