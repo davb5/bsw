@@ -4,6 +4,7 @@ import os
 import re
 
 from . import templates
+from . import includes
 
 
 class Page:
@@ -52,7 +53,7 @@ class Page:
             regex_this_include = "<!--\s+include\(\"{0}\"\)\s+-->".format(match)
             self.rendered_page = re.sub(regex_this_include,
                                         include_data,
-                                        self.rendered_page)
+                                        self.body)
 
     def render(self):
         """Render page using template, insert any includes and do page
