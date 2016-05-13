@@ -51,9 +51,9 @@ class Page:
         for match in matches:
             include_data = includes.get_include(match)
             regex_this_include = "<!--\s+include\(\"{0}\"\)\s+-->".format(match)
-            self.rendered_page = re.sub(regex_this_include,
-                                        include_data,
-                                        self.body)
+            self.body = re.sub(regex_this_include,
+                               include_data,
+                               self.body)
 
     def render(self):
         """Render page using template, insert any includes and do page
@@ -64,8 +64,8 @@ class Page:
         else:
             template = templates.get_template("base.html")
 
-        self.rendered_page = template.replace("$page_content", self.body)
         self.replace_includes()
+        self.rendered_page = template.replace("$page_content", self.body)
         for page_var in self.page_vars:
             self.rendered_page = self.rendered_page.replace("$" + page_var,
                                                             self.page_vars[page_var])
