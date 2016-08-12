@@ -41,7 +41,7 @@ class FileManager(object):
 
     def copy_site_assets(self):
         """Copy site asset files to output directory."""
-        if os.path.isdir(os.path.join(self.out_dir, "static")):
+        if os.path.isdir("static"):
             self.merge_dirs("static", os.path.join(self.out_dir, "static"))
 
     def clean_build_path(self):
