@@ -53,6 +53,7 @@ import sys
 from . import files
 from . import pages
 from . import templates
+from . import __version__
 
 OUT_DIR = os.path.abspath(os.path.join(".", "build"))
 
@@ -140,7 +141,13 @@ def main():
                         metavar="PATH")
     parser.add_argument("--template", 
                         help="built-in template to use with --init")
+    parser.add_argument("-V", "--version", action="store_true",
+                        help="display bsw version information")
     args = parser.parse_args()
+
+    if (args.version):
+        print("bsw version {}".format(__version__))
+        sys.exit(0)
 
     if (args.clean and args.init):
         print("Error: Please specify either --clean or --init")
