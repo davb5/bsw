@@ -1,5 +1,7 @@
 """bsw include handling functions"""
 
+import os
+
 include_cache = {}
 
 
