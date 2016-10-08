@@ -61,11 +61,11 @@ class TestPages(unittest.TestCase):
         test_page = Page(self.test_page_filename)
         test_page.load_and_parse()
 
-        test_page.replace_includes()
+        test_page.rendered_page = test_page.replace_includes(test_page.body)
         self.assertNotIn("<!-- include(\"test_include.html\") -->",
-                         test_page.body)
+                         test_page.rendered_page)
         self.assertIn("<h1>This is a test include</h1>",
-                      test_page.body)
+                      test_page.rendered_page)
 
     def test_render(self):
         # Preload the includes cache
