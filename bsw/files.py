@@ -62,7 +62,7 @@ class FileManager(object):
         """
         module_path = os.path.dirname(os.path.abspath(__file__))
         template_path = os.path.join(module_path, "templates", template_name)
-        
+
         if not os.path.exists(template_path):
             raise IOError("Template {0} not found".format(template_name))
 

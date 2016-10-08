@@ -134,12 +134,12 @@ def main():
                         help="remove existing build folder before building")
     parser.add_argument("-s", "--serve", action="store_true",
                         help="serve content after build (default port 8000)")
-    parser.add_argument("--init", 
+    parser.add_argument("--init",
                         help="initialise a new bsw site as the specified path",
                         nargs="?",
                         const=".",
                         metavar="PATH")
-    parser.add_argument("--template", 
+    parser.add_argument("--template",
                         help="built-in template to use with --init")
     parser.add_argument("-V", "--version", action="store_true",
                         help="display bsw version information")
